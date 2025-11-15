@@ -1,25 +1,33 @@
-# Hello Blockchain - Aptos Move 智能合约示例
+# My First NFT - Aptos Move NFT 智能合约示例
 
-这是一个简单的 Aptos Move 智能合约示例项目，演示了如何在 Aptos 区块链上存储和修改消息。
+这是一个基于 Aptos 区块链的 NFT（非同质化代币）智能合约示例项目，演示了如何在 Aptos 上创建 NFT 集合、铸造 NFT 和管理 NFT。
 
 ## 项目功能
 
-这个项目实现了一个简单的消息存储系统，包含以下功能：
+这个项目实现了一个完整的 NFT 系统，包含以下功能：
 
-1. **消息存储**：使用 `MessageHolder` 资源在链上存储一条消息
-2. **读取消息**：通过 `get_message()` 函数查询当前存储的消息
-3. **修改消息**：通过 `set_message()` 函数更新消息内容
-4. **事件记录**：每次消息变更都会触发 `MessageChange` 事件，记录变更历史
+1. **NFT 集合创建**：在模块初始化时自动创建一个名为 "mfers" 的无限集合
+2. **NFT 铸造**：通过 `mint()` 函数铸造新的 NFT，每个 NFT 都有唯一的编号和 URI
+3. **NFT 销毁**：通过 `burn()` 函数销毁 NFT（仅所有者可操作）
+4. **事件记录**：铸造和销毁操作都会触发相应的事件，记录操作历史
+5. **集合查询**：提供查询集合创建者地址和集合对象的函数
 
 ## 代码结构
 
-- **模块名**：`hello_blockchain::message`
-- **资源**：`MessageHolder` - 存储消息的链上资源
-- **函数**：
-  - `init_module()` - 初始化模块，设置默认消息为 "Hello, Blockchain"
-  - `get_message()` - 查询当前消息（view 函数）
-  - `set_message()` - 修改消息（entry 函数）
-- **事件**：`MessageChange` - 记录消息变更事件
+- **模块名**：`my_first_nft::my_first_nft`
+- **主要结构体**：
+  - `SignerCapabilityStore` - 存储签名者能力，用于后续操作
+  - `CollectionRefsStore` - 存储集合引用，用于管理集合
+  - `TokenRefsStore` - 存储代币引用，用于管理代币（修改、销毁、转移等）
+- **主要函数**：
+  - `init_module()` - 模块初始化函数，创建 NFT 集合和必要的存储结构
+  - `mint()` - 铸造新的 NFT（entry 函数）
+  - `burn()` - 销毁指定的 NFT（entry 函数）
+  - `get_collection_creator_address()` - 获取集合创建者地址（view 函数）
+  - `get_collection_object()` - 获取集合对象（view 函数）
+- **事件**：
+  - `MintEvent` - 记录 NFT 铸造事件
+  - `BurnEvent` - 记录 NFT 销毁事件
 
 ## 使用步骤
 
@@ -99,51 +107,74 @@ profiles:
 
 ### 3. 设置模块地址并发布合约
 
-首先，需要设置 `hello_blockchain` 的地址。查看你的账户地址：
+首先，需要设置 `my_first_nft` 的地址。查看你的账户地址：
 
 ```bash
 aptos config show-profiles
 ```
 
-然后更新 `Move.toml` 文件中的地址，或者使用命令行参数：
+然后使用命令行参数发布合约：
 
 ```bash
-aptos move publish --named-addresses hello_blockchain=<你的账户地址>
+aptos move publish --named-addresses my_first_nft=<你的账户地址>
 ```
 
-### 4. 查询消息
+发布成功后，`init_module()` 函数会自动执行，创建一个名为 "mfers" 的 NFT 集合。
 
-发布后，可以使用 view 函数查询当前消息：
+### 4. 查询集合信息
+
+发布后，可以使用 view 函数查询集合创建者地址：
 
 ```bash
-aptos move view --function-id <你的账户地址>::message::get_message
+aptos move view --function-id <你的账户地址>::my_first_nft::get_collection_creator_address
 ```
 
-### 5. 修改消息
-
-使用 `set_message` 函数修改消息：
+查询集合对象：
 
 ```bash
-aptos move run --function-id <你的账户地址>::message::set_message --args string:"Hello, Aptos!"
+aptos move view --function-id <你的账户地址>::my_first_nft::get_collection_object
 ```
 
-### 6. 验证修改
+### 5. 铸造 NFT
 
-再次查询消息，确认修改成功：
+使用 `mint()` 函数铸造一个新的 NFT：
 
 ```bash
-aptos move view --function-id <你的账户地址>::message::get_message
+aptos move run --function-id <你的账户地址>::my_first_nft::mint
 ```
+
+每次调用 `mint()` 都会创建一个新的 NFT，NFT 会自动编号（如 "mfer #1", "mfer #2" 等），并设置对应的 URI。
+
+### 6. 销毁 NFT
+
+使用 `burn()` 函数销毁指定的 NFT（只有 NFT 的所有者才能销毁）：
+
+```bash
+aptos move run --function-id <你的账户地址>::my_first_nft::burn --args address:<NFT对象地址>
+```
+
+> **注意**：NFT 对象地址是 NFT 被铸造时分配的唯一地址，可以通过查看 `MintEvent` 事件获取。
+
+### 7. 查看 NFT 信息
+
+你可以在 Aptos Explorer（探索器）中查看你的 NFT：
+
+1. 访问 [Aptos Testnet Explorer](https://explorer.aptoslabs.com/?network=testnet)
+2. 在搜索框中输入你的账户地址
+3. 在账户详情页面中，你可以查看该账户拥有的所有 NFT 对象
+4. 点击具体的 NFT 对象可以查看详细信息，包括名称、URI、元数据等
 
 ## 项目文件
 
-- `sources/helloworld.move` - Move 智能合约源代码
+- `sources/my_first_nft.move` - Move 智能合约源代码
 - `Move.toml` - Move 项目配置文件
 - `.gitignore` - Git 忽略文件配置
 
 ## 依赖
 
-- Aptos Framework
+- **AptosFramework** - Aptos 核心框架，提供对象系统、事件系统等基础功能
+- **AptosStdlib** - Aptos 标准库，提供字符串工具等实用功能
+- **AptosTokenObjects** - Aptos Token 对象库，提供 NFT 集合和代币功能
 
 ## 测试
 
@@ -153,9 +184,23 @@ aptos move view --function-id <你的账户地址>::message::get_message
 aptos move test
 ```
 
+## NFT 集合信息
+
+本合约创建的 NFT 集合具有以下特征：
+
+- **集合名称**：mfers
+- **集合描述**：mfers are generated entirely from hand drawings by sartoshi. this project is in the public domain; feel free to use mfers any way you want.
+- **集合类型**：无限集合（unlimited collection），不限制 NFT 数量
+- **版税**：5%（支付给合约部署者）
+- **代币命名**：自动编号，格式为 "mfer #1", "mfer #2" 等
+- **代币 URI**：基于 IPFS，格式为 `ipfs://bafybeiearr64ic2e7z5ypgdpu2waasqdrslhzjjm65hrsui2scqanau3ya/<编号>.png`
+
 ## 注意事项
 
 - 确保已安装 Aptos CLI 工具
 - 首次发布需要足够的测试币支付 gas 费用
 - 模块地址需要在发布前正确设置
+- 每次铸造 NFT 都需要支付 gas 费用
+- 只有 NFT 的所有者才能销毁该 NFT
+- 销毁 NFT 是不可逆操作，请谨慎操作
 
