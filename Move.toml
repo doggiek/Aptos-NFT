@@ -1,0 +1,24 @@
+[package]
+name = "my_first_nft"
+version = "0.0.0"
+
+[addresses]
+my_first_nft = "_"
+
+[dev-addresses]
+my_first_nft = "0xC0FFEE"
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+subdir = "aptos-framework"
+rev = "main"
+
+[dependencies.AptosStdlib]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+subdir = "aptos-stdlib"
+rev = "main"
+
+[dependencies.AptosTokenObjects]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+subdir = "aptos-token-objects"
+rev = "main"
