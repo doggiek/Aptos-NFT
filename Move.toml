@@ -3,7 +3,7 @@ name = "my_first_nft"
 version = "0.0.0"
 
 [addresses]
-my_first_nft = "_"
+my_first_nft = "0x168dc475420414ab5876adbfddcc9ef1aadfdd769fdbfd7a1e0394392dd6c1a0"
 
 [dev-addresses]
 my_first_nft = "0xC0FFEE"

@@ -53,14 +53,13 @@ Aptos CLI is now set up for account 0xac3b25cf6ba24f259ee2c8289c39e25efc02408d56
 ---
 
 The account has not been funded on chain yet. To fund the account and get APT on testnet you must visit https://aptos.dev/network/faucet?address=0xac3b25cf6ba24f259ee2c8289c39e25efc02408d562b475d716f8f6f6f43e247
-Press [Enter] to go there now > 
+Press [Enter] to go there now >
 
 （此处如果回车则直接进入水龙头网址前往领水，与下方 步骤 2 相同）
 
 ```
 
 当前命令中的输出结果中的 `0xac3b25cf6ba24f259ee2c8289c39e25efc02408d562b475d716f8f6f6f43e247` 是你的地址（可以认为是在 Blockchain 中的账号
-
 
 ```
 ---
@@ -83,11 +82,9 @@ profiles:
     rest_url: "https://fullnode.testnet.aptoslabs.com"
 ```
 
-
-
 ### 2. 获取测试币
 
-可以通过 `aptos account balance` 命令查看当前地址的余额 
+可以通过 `aptos account balance` 命令查看当前地址的余额
 
 有两种方式可以获取测试币：
 
@@ -204,3 +201,14 @@ aptos move test
 - 只有 NFT 的所有者才能销毁该 NFT
 - 销毁 NFT 是不可逆操作，请谨慎操作
 
+## 🟡 补充说明：
+
+### 配置文件修改 & Publish
+
+- 配置文件中的 `my_first_nft` 需要改成“要发布合约的地址”
+- 重新编译：`aptos move compile`
+- 再次部署：`aptos move publish --named-addresses my_first_nft=0x1`
+
+### mint NFT
+
+- Aptos Explorer: https://explorer.aptoslabs.com/token/0x14243f7081450ece40832e0d7a113ac61ff54f2fb775b8f32a7efec19b1eb88b/0?network=testnet

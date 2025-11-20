@@ -124,7 +124,7 @@ module my_first_nft::my_first_nft {
 
         // 将集合引用存储到集合对象的存储中
         // TODO: 将集合引用存储到集合对象的存储中
-        abort 0;
+        // abort 0;
 
         // 将签名者能力存储到集合创建者对象的存储中
         // 这样后续可以通过 extend_ref 生成签名者来执行操作
@@ -240,6 +240,13 @@ module my_first_nft::my_first_nft {
 
         // TODO: 触发销毁事件，记录销毁信息
         abort 0;
+        // 触发销毁事件，记录销毁信息（记录原始所有者和 token id）
+        // event::emit(
+        //     BurnEvent {
+        //         owner: signer::address_of(sender),
+        //         token_id: object::address_from_object(&object)
+        //     }
+        // );
         
 
         // 使用销毁引用来销毁代币
@@ -252,6 +259,7 @@ module my_first_nft::my_first_nft {
     /// 
     /// 返回:
     /// - address: 集合创建者对象的地址
+    #[view] // 添加 view 注解，表示这是一个只读函数 （4. 查询集合信息
     public fun get_collection_creator_address(): address {
         // 根据合约地址和空种子创建对象地址
         // 这与 init_module 中创建命名对象时使用的参数一致
@@ -263,6 +271,7 @@ module my_first_nft::my_first_nft {
     /// 
     /// 返回:
     /// - Object<collection::Collection>: 集合对象
+    #[view]
     public fun get_collection_object(): Object<collection::Collection> {
         // 根据集合创建者地址和集合名称创建集合地址
         // 然后将地址转换为对象引用
